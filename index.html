@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/yix5siq.css">
+
+    <style>
+        /* フォント設定 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+        * {
+            font-family: "futura-pt", Helvetica, Arial, sans-serif;
+            font-weight: 500;
+
+        }
+
+        /* スクロールバー非表示 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        button img {
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gray-900 text-gray-800">
+
+    <!-- Phone Container Fixed Size 402x874 -->
+    <div class="bg-[#F5F7FA] relative overflow-hidden shadow-2xl"
+        style="width: 402px; height: 814px;">
+
+        <!-- ========================================== -->
+        <!-- MAIN VIEW (Home)                           -->
+        <!-- ========================================== -->
+        <div id="main-view" class="h-full flex flex-col transition-opacity duration-300">
+
+            <!-- Header Section (Blue Background) -->
+            <!-- Modified: Fixed height to 16% (h-[16%]), Removed rounded-b-[30px] -->
+            <div class="bg-[#5C93D6] text-white pt-2 pb-6 h-[9%] shadow-sm relative z-10">
+
+                <!-- Status Bar Removed -->
+
+                <!-- Schedule Header -->
+                <div class="px-6">
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <div class="text-[14px] font-medium w-16">09:00 -</div>
+                        <div class="flex-1 text-center font-bold text-[14px] tracking-wide">メディアデザイン実習A</div>
+                        <div class="text-[14px] w-12 text-right">7-406</div>
+                    </div>
+                    <div class="flex justify-between items-center text-white/60 relative z-10">
+                        <div class="text-[14px] w-16">10:50 -</div>
+                        <div class="flex-1 text-center font-medium text-[14px]">生物学A</div>
+                        <div class="text-[14px] w-12 text-right">4－A</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Content Area for Main View -->
+            <div class="flex-1 overflow-y-auto no-scrollbar pb-24">
+                <!-- Bus Schedule Card -->
+                <div class="mx-4 mt-3 bg-white rounded-[14px] shadow-sm relative z-20 overflow-hidden transition-all duration-300 ease-in-out"
+                    id="schedule-card">
+                    <div class="flex border-b border-gray-100">
+                        <button id="tab-university" onclick="switchBusTab('university')"
+                            class="flex-1 py-4 text-center text-[17px] font-bold relative transition-colors text-[#5C93D6]">
+                            大学行
+                            <div class="active-indicator absolute bottom-0 left-0 right-0 h-[3px] bg-[#5C93D6]"></div>
+                        </button>
+                        <button id="tab-station" onclick="switchBusTab('station')"
+                            class="flex-1 py-4 text-center text-[17px] font-bold relative transition-colors text-gray-300">
+                            相原駅行
+                            <div class="active-indicator absolute bottom-0 left-0 right-0 h-[3px] bg-[#5C93D6] hidden">
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Countdown View -->
+                    <div id="countdown-view" class="transition-opacity duration-300">
+                        <div class="pt-8 pb-8 text-center relative">
+                            <div
+                                class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+                                <img src="img/bus_illust.png" alt="" width="280px"
+                                    class="opacity-10 mt-[50px] mr-[150px]">
+                            </div>
+                            <div class="text-[#1a1a1a] font-bold text-[18px] mb-1 relative z-10 tracking-wider">
+                                出発まで
+                            </div>
+
+                            <!-- Dynamic Countdown Container -->
+                            <div id="countdown-display"
+                                class="flex justify-center items-baseline text-[#1a1a1a] relative z-10 leading-none min-h-[64px]">
+                                <!-- JavaScript will inject here -->
+                                <span class="text-3xl font-bold">読み込み中...</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Horizontal Time Picker -->
+                        <div class="bg-white px-4 pb-6 pt-2 border-t border-gray-100/50">
+                            <div class="flex justify-between items-center px-2">
+                                <div id="horizontal-schedule"
+                                    class="flex items-center gap-1 text-xl font-medium text-gray-800 overflow-x-auto no-scrollbar whitespace-nowrap">
+                                    <!-- JavaScript will inject minutes here -->
+                                </div>
+                                <button onclick="toggleSchedule()" class="p-1 focus:outline-none flex-shrink-0 ml-2">
+                                    <svg id="toggle-icon-down"
+                                        class="w-6 h-6 text-[#6B9FDB] opacity-80 transition-transform duration-300"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule List View (Full Table) -->
+                    <div id="schedule-view" class="hidden bg-white pb-2 relative">
+                        <div class="h-[460px] overflow-y-auto no-scrollbar pt-2 px-2">
+                            <table class="w-full text-lg">
+                                <tbody id="full-timetable-body" class="text-gray-800">
+                                    <!-- JavaScript will inject rows here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex justify-end pr-6  pt-1 border-t border-gray-100">
+                            <button onclick="toggleSchedule()" class="p-1 focus:outline-none">
+                                <svg class="w-6 h-6 text-[#6B9FDB] opacity-80" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="18 15 12 9 6 15"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cafeteria Menu Card (Main) -->
+                <div class="mx-4 mt-3 bg-white rounded-[14px] shadow-sm relative overflow-hidden pb-2">
+                    <div class="absolute right-0 bottom-0 w-full h-full pointer-events-none">
+                        <img src="img/gakushoku_illust.png" alt="" width="160px" class="mt-[110px] ml-[205px]">
+                    </div>
+
+                    <div class="flex justify-between items-center p-5 border-b border-gray-100">
+                        <div class="flex items-center gap-2.5">
+                            <img src="img/gakushoku.png" alt="" width="17px">
+                            <span class="font-bold text-[#1A2930] text-[18px]">学食メニュー</span>
+                        </div>
+                        <!-- Button to open Detail View -->
+                        <button onclick="showMenuDetail()" class="p-1 focus:outline-none">
+                            <svg class="w-5 h-5 text-[#6B9FDB]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-4 px-5 py-2.5 border-b border-gray-50 relative z-10">
+                            <div
+                                class="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[16px] font-bold bg-[#E8F1FC] text-[#5C93D6]">
+                                A</div>
+                            <div class="flex-1 font-bold text-gray-700 text-[15px]">肉野菜炒め定食</div>
+                            <div class="font-bold text-gray-800 text-[15px]">400円</div>
+                        </div>
+                        <div class="flex items-center gap-4 px-5 py-2.5 border-b border-gray-50 relative z-10">
+                            <div
+                                class="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[16px] font-bold bg-[#E8F1FC] text-[#5C93D6]">
+                                B</div>
+                            <div class="flex-1 font-bold text-gray-700 text-[15px]">白身魚のタルタル焼き定食</div>
+                            <div class="font-bold text-gray-800 text-[15px]">450円</div>
+                        </div>
+                        <div class="flex items-center gap-4 px-5 py-2.5 border-b border-gray-50 relative z-10">
+                            <div
+                                class="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[16px] font-bold bg-[#E8F1FC] text-[#5C93D6]">
+                                C</div>
+                            <div class="flex-1 font-bold text-gray-700 text-[15px]">豚ロースカツのおろしだれ定食</div>
+                            <div class="font-bold text-gray-800 text-[15px]">500円</div>
+                        </div>
+                        <div class="flex items-center gap-4 px-5 py-3 relative z-10">
+                            <div class="w-[30px] h-[30px] rounded-full flex items-center justify-center bg-[#E8F1FC]">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="#5C93D6" stroke="none">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                            </div>
+                            <div class="flex-1 font-bold text-gray-700 text-[15px]">鰻丼</div>
+                            <div class="font-bold text-gray-800 text-[15px]">750円</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Mascot (Elephant) -->
+            <div class="absolute bottom-[88px] right-5 z-30 drop-shadow-xl filter">
+                <div class="relative w-16">
+                    <img src="img/hanako.png" alt="" width="64px" class="mb-0">
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- LINKS VIEW (Hidden by default)             -->
+        <!-- ========================================== -->
+        <div id="links-view" class="hidden h-full flex flex-col bg-[#F5F7FA] relative">
+            <!-- White Header (Status Bar Removed) -->
+
+            <!-- Links Content -->
+            <div class="flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-24 space-y-4">
+
+                <!-- CanpusNet Card -->
+                <a href="#"
+                    class="block bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center group active:scale-[0.98] transition-transform">
+                    <span class="font-bold text-xl text-gray-900">CanpusNet</span>
+                    <svg class="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+
+                <!-- University Official Site Card -->
+                <a href="#"
+                    class="block bg-white rounded-2xl p-6 shadow-sm flex justify-between items-center group active:scale-[0.98] transition-transform">
+                    <span class="font-bold text-xl text-gray-900">大学公式サイト</span>
+                    <svg class="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+
+                <!-- Opinions / Requests Card -->
+                <a href="#"
+                    class="block bg-white rounded-2xl p-5 shadow-sm flex justify-between items-center mt-8 active:scale-[0.98] transition-transform">
+                    <span class="font-bold text-base text-[#5C93D6]">ご意見・ご要望</span>
+                    <svg class="w-5 h-5 text-[#5C93D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+
+                <!-- ZONAVI Usage Card -->
+                <a href="#"
+                    class="block bg-white rounded-2xl p-5 shadow-sm flex justify-between items-center active:scale-[0.98] transition-transform">
+                    <span class="font-bold text-base text-[#5C93D6]">ZONAVIの使い方</span>
+                    <svg class="w-5 h-5 text-[#5C93D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </a>
+
+                <!-- Share LINE Card -->
+                <a href="#"
+                    class="block bg-white rounded-2xl p-5 shadow-sm flex justify-between items-center active:scale-[0.98] transition-transform">
+                    <span class="font-bold text-base text-[#5C93D6]">LINEでシェア</span>
+                    <!-- Share Icon (Box with arrow up) -->
+                    <svg class="w-5 h-5 text-[#5C93D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                        <polyline points="16 6 12 2 8 6"></polyline>
+                        <line x1="12" y1="2" x2="12" y2="15"></line>
+                    </svg>
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MENU DETAIL VIEW (Hidden by default)       -->
+        <!-- ========================================== -->
+        <div id="menu-detail-view" class="hidden h-full flex flex-col bg-white">
+
+            <!-- White Header (Status Bar Removed) -->
+            <div class="bg-white text-gray-900 pt-8 pb-0 z-10">
+                <!-- Status Bar Removed -->
+
+                <!-- Back Button -->
+                <div class="px-4 py-0">
+                    <button onclick="showMain()" class="p-2 focus:outline-none text-[#5C93D6]">
+                        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Week Tabs -->
+            <div class="flex justify-between px-4 border-b border-gray-100 text-gray-300 font-bold text-[15px]">
+                <button id="menu-tab-mon" onclick="switchMenuTab('mon')"
+                    class="flex-1 py-3 text-center transition-colors">月</button>
+                <button id="menu-tab-tue" onclick="switchMenuTab('tue')"
+                    class="flex-1 py-3 text-center transition-colors">火</button>
+                <button id="menu-tab-wed" onclick="switchMenuTab('wed')"
+                    class="flex-1 py-3 text-center transition-colors">水</button>
+                <button id="menu-tab-thu" onclick="switchMenuTab('thu')"
+                    class="flex-1 py-3 text-center transition-colors">木</button>
+                <button id="menu-tab-fri" onclick="switchMenuTab('fri')"
+                    class="flex-1 py-3 text-center transition-colors">金</button>
+            </div>
+
+            <!-- Scrollable List -->
+            <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative">
+                <!-- Date -->
+                <div id="menu-date" class="px-6 py-4 text-[#5C93D6] font-bold text-[19px]">9/15</div>
+
+                <!-- Menu Item Container -->
+                <div id="menu-list-container" class="flex flex-col">
+                    <!-- Javascript will populate this -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TIMETABLE VIEW (Hidden by default)         -->
+        <!-- ========================================== -->
+        <div id="timetable-view" class="hidden h-full flex flex-col bg-white relative">
+
+            <!-- White Header (Status Bar Removed) -->
+            <div class="bg-white text-gray-900 pt-8 pb-2 z-10">
+                <!-- Status Bar Removed -->
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 mx-4 mb-2">
+                <button id="tab-timetable-main" onclick="switchTimetableTab('timetable')"
+                    class="flex-1 pb-2 text-center text-[#5C93D6] font-bold border-b-[3px] border-[#5C93D6] text-lg">時間割</button>
+                <button id="tab-annual" onclick="switchTimetableTab('annual')"
+                    class="flex-1 pb-2 text-center text-gray-300 font-bold text-lg">年間スケジュール</button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto no-scrollbar px-2 pb-24">
+
+                <!-- Timetable Grid (Default) -->
+                <div id="content-timetable" class="h-[95%]">
+                    <div class="grid grid-cols-[40px_1fr_1fr_1fr_1fr_1fr] gap-[2px] text-xs h-full">
+                        <!-- Header Row -->
+                        <div class="text-center py-2"></div> <!-- Corner -->
+                        <div class="text-center font-bold text-gray-700 py-2 text-base">月</div>
+                        <div class="text-center font-bold text-gray-700 py-2 text-base">火</div>
+                        <div class="text-center font-bold text-gray-700 py-2 text-base">水</div>
+                        <div class="text-center font-bold text-gray-700 py-2 text-base">木</div>
+                        <div class="text-center font-bold text-gray-700 py-2 text-base">金</div>
+
+                        <!-- Period 1: 09:00 - 10:40 -->
+                        <div
+                            class="flex flex-col justify-between text-[10px] text-[#5C93D6] items-center py-4 border-r border-gray-100 font-medium">
+                            <span>09:00</span>
+                            <span class="text-xl font-bold text-gray-800 my-1">1</span>
+                            <span>10:40</span>
+                        </div>
+                        <!-- Mon 1 -->
+                        <div class="bg-[#F8C8B3] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">デザイン史B</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-E</span>
+                        </div>
+                        <!-- Tue 1 -->
+                        <div class="bg-[#9FD9CA] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">3DCG演習</span>
+                            <span class="font-bold text-[11px] text-gray-800">7-405</span>
+                        </div>
+                        <!-- Wed 1 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Thu 1 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Fri 1 -->
+                        <div class="bg-[#9FD9CA] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">MD論E</span>
+                            <span class="font-bold text-[11px] text-gray-800">7-406</span>
+                        </div>
+
+                        <!-- Period 2: 10:50 - 12:30 -->
+                        <div
+                            class="flex flex-col justify-between text-[10px] text-[#5C93D6] items-center py-4 border-r border-gray-100 font-medium">
+                            <span>10:50</span>
+                            <span class="text-xl font-bold text-gray-800 my-1">2</span>
+                            <span>12:30</span>
+                        </div>
+                        <!-- Mon 2 -->
+                        <div class="bg-[#F8E8A8] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">歴史学B</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-E</span>
+                        </div>
+                        <!-- Tue 2 -->
+                        <div class="bg-[#9FD9CA] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">3DCG演習</span>
+                            <span class="font-bold text-[11px] text-gray-800">7-405</span>
+                        </div>
+                        <!-- Wed 2 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Thu 2 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Fri 2 -->
+                        <div class="bg-[#F7C59F] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">人体学B</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-A</span>
+                        </div>
+
+                        <!-- Period 3: 13:20 - 15:00 -->
+                        <div
+                            class="flex flex-col justify-between text-[10px] text-[#5C93D6] items-center py-4 border-r border-gray-100 font-medium">
+                            <span>13:20</span>
+                            <span class="text-xl font-bold text-gray-800 my-1">3</span>
+                            <span>15:00</span>
+                        </div>
+                        <!-- Mon 3 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Tue 3 -->
+                        <div class="bg-[#F8E8A8] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[10px] leading-tight mb-1 text-gray-800">西洋建築士B</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-D</span>
+                        </div>
+                        <!-- Wed 3 -->
+                        <div class="bg-[#EFA8A8] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[10px] leading-tight mb-1 text-gray-800">スポーツ実技</span>
+                            <span class="font-bold text-[11px] text-gray-800">CS HOLE</span>
+                        </div>
+                        <!-- Thu 3 -->
+                        <div class="bg-[#EFA8A8] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">生物学B</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-A</span>
+                        </div>
+                        <!-- Fri 3 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+
+                        <!-- Period 4: 15:10 - 16:50 -->
+                        <div
+                            class="flex flex-col justify-between text-[10px] text-[#5C93D6] items-center py-4 border-r border-gray-100 font-medium">
+                            <span>15:10</span>
+                            <span class="text-xl font-bold text-gray-800 my-1">4</span>
+                            <span>16:50</span>
+                        </div>
+                        <!-- Mon 4 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Tue 4 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Wed 4 -->
+                        <div class="bg-[#EFA8A8] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">ドイツ語II</span>
+                            <span class="font-bold text-[11px] text-gray-800">2-204</span>
+                        </div>
+                        <!-- Thu 4 -->
+                        <div class="bg-[#F7C59F] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[10px] leading-tight mb-1 text-gray-800">デジタル写真<br>エレメンツ</span>
+                            <span class="font-bold text-[11px] text-gray-800">8-203</span>
+                        </div>
+                        <!-- Fri 4 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+
+                        <!-- Period 5: 17:00 - 18:40 -->
+                        <div
+                            class="flex flex-col justify-between text-[10px] text-[#5C93D6] items-center py-4 border-r border-gray-100 font-medium">
+                            <span>17:00</span>
+                            <span class="text-xl font-bold text-gray-800 my-1">5</span>
+                            <span>18:40</span>
+                        </div>
+                        <!-- Mon 5 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Tue 5 -->
+                        <div class="bg-[#C9C0E6] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">記号論</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-D</span>
+                        </div>
+                        <!-- Wed 5 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Thu 5 -->
+                        <div class="border border-gray-50 rounded-sm"></div>
+                        <!-- Fri 5 -->
+                        <div class="bg-[#C9C0E6] rounded-sm p-1 flex flex-col justify-center items-center text-center">
+                            <span class="font-bold text-[11px] leading-tight mb-1 text-gray-800">美術概論</span>
+                            <span class="font-bold text-[11px] text-gray-800">4-D</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Annual Schedule View (Initially Hidden) -->
+                <div id="content-annual" class="hidden h-full">
+                    <!-- Placeholder Image - Replace URL to change image -->
+                    <img src="img/授業日程表2025.pdf"
+                        alt="Annual Schedule" class="w-full h-auto rounded-lg object-contain">
+                    <div class="text-center text-gray-400 mt-4 text-sm">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- BOTTOM NAVIGATION (Common)                 -->
+        <!-- ========================================== -->
+        <div
+            class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 rounded-b-[40px] px-2 pb-4 pt-2 z-40">
+            <div class="flex justify-around items-center">
+                <!-- Calendar (Schedule) -->
+                <button id="nav-calendar" onclick="showTimetable()"
+                    class="flex flex-col items-center gap-1.5 flex-1 py-2 text-gray-300">
+                    <img src="img/schedule.png" alt="" width="24px">
+                    <span class="text-[10px] font-bold tracking-wide">予定</span>
+                </button>
+
+                <!-- Home (Active) -->
+                <button id="nav-home" onclick="showMain()"
+                    class="flex flex-col items-center gap-1.5 flex-1 py-2 text-[#1B3B48] relative">
+                    <img src="img/home.png" alt="" width="24px">
+                    <span class="text-[10px] font-bold tracking-wide">ホーム</span>
+                </button>
+
+                <!-- Links -->
+                <button id="nav-links" onclick="showLinks()"
+                    class="flex flex-col items-center gap-1.5 flex-1 py-2 text-gray-300">
+                    <img src="img/link.png" alt="" width="24px">
+                    <span class="text-[10px] font-bold tracking-wide">リンク</span>
+                </button>
+            </div>
+            <!-- iOS Home Indicator -->
+            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-black rounded-full"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // === BUS SCHEDULE DATA ===
+        // Updated based on user request (Full 24h schedule)
+        const busScheduleData = {
+            'university': {
+                '1': [20, 25, 37, 48, 53],
+                '2': [2, 32, 42, 53],
+                '3': [9, 23, 36, 48],
+                '4': [15, 32, 42, 53],
+                '5': [12, 32, 42, 53, 59],
+                '6': [2, 32, 42, 53],
+                '7': [20, 25, 37, 48, 53],
+                '8': [25, 32, 42, 53],
+                '9': [0, 7, 17, 27, 40, 53],
+                '10': [11, 24, 33, 43, 55],
+                '11': [11, 22, 41],
+                '12': [20, 31, 41, 51],
+                '13': [1, 11, 21, 32, 51],
+                '14': [11, 23, 35, 51],
+                '15': [20, 25, 37, 48, 53],
+                '16': [9, 22, 33, 50],
+                '17': [0, 10, 22, 32, 44, 58],
+                '18': [14, 28, 41, 53],
+                '19': [12, 24, 39, 59],
+                '20': [6, 27, 44, 56],
+                '21': [9, 28],
+                '22': [7, 19, 34, 54],
+                '23': [20, 25, 37, 48, 53],
+                '24': [9, 23, 36, 48]
+            },
+            'station': {
+                '1': [7, 19, 34, 54],
+                '2': [1, 11, 21, 32, 51],
+                '3': [0, 10, 22, 32, 44, 58],
+                '4': [15, 32, 42, 53],
+                '5': [7, 19, 34, 54],
+                '6': [2, 32, 42, 53],
+                '7': [5, 32, 42, 53],
+                '8': [20, 25, 37, 48, 53],
+                '9': [0, 12, 22, 35, 48],
+                '10': [6, 18, 28, 38, 50],
+                '11': [6, 17, 36],
+                '12': [15, 26, 36, 46, 56],
+                '13': [6, 16, 26, 46],
+                '14': [6, 18, 30, 46, 59],
+                '15': [10, 27, 47],
+                '16': [4, 17, 28, 45, 55],
+                '17': [7, 17, 27, 39, 53],
+                '18': [9, 23, 36, 48],
+                '19': [7, 19, 34, 54],
+                '20': [1, 11, 21, 32, 51],
+                '21': [15, 32, 42, 53],
+                '22': [7, 19, 34, 54],
+                '23': [6, 27, 44, 56],
+                '24': [9, 13, 44, 54]
+            }
+        };
+
+        let currentBusType = 'university';
+        let updateTimerInterval;
+
+        function updateBusDisplay() {
+            const now = new Date();
+            // Debug: const now = new Date(); now.setHours(9); now.setMinutes(15); 
+
+            let currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+            if (currentHour === 0) currentHour = 24;
+
+            const schedule = busScheduleData[currentBusType];
+            let nextBus = null;
+            let displayHour = currentHour;
+
+            const sortedHours = Object.keys(schedule).map(Number).sort((a, b) => a - b);
+
+            let found = false;
+            for (let h of sortedHours) {
+                if (h < currentHour) continue;
+
+                const mins = schedule[h];
+                for (let m of mins) {
+                    if (h > currentHour || (h === currentHour && m > currentMinute)) {
+                        nextBus = { hour: h, minute: m };
+                        displayHour = h;
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+
+            // If not found today, look for next day (simplified)
+            if (!found) {
+                for (let h of sortedHours) {
+                    if (schedule[h] && schedule[h].length > 0) {
+                        break;
+                    }
+                }
+            }
+
+            // 2. Update Countdown
+            const countdownEl = document.getElementById('countdown-display');
+            if (nextBus) {
+                const nextBusTime = new Date(now);
+                let targetHour = nextBus.hour;
+
+                if (targetHour === 24) {
+                    if (currentHour !== 23 && currentHour !== 24) targetHour = 0;
+                }
+
+                const targetDate = new Date(now);
+                if (nextBus.hour === 24) targetDate.setHours(0);
+                else targetDate.setHours(nextBus.hour);
+
+                targetDate.setMinutes(nextBus.minute);
+                targetDate.setSeconds(0);
+
+                if (targetDate <= now) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
+
+                let diffMs = targetDate - now;
+                if (diffMs < 0) diffMs = 0;
+
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffSecs = Math.floor((diffMs % 60000) / 1000);
+
+                countdownEl.innerHTML = `
+                    <span class="text-[64px] font-medium tracking-tighter tabular-nums">${diffMins}</span>
+                    <span class="text-2xl font-bold mx-1">分</span>
+                    <span class="text-[64px] font-medium tracking-tighter tabular-nums">${String(diffSecs).padStart(2, '0')}</span>
+                    <span class="text-2xl font-bold ml-1">秒</span>
+                `;
+            } else {
+                countdownEl.innerHTML = `<span class="text-3xl font-bold text-gray-400">本日の運行終了</span>`;
+            }
+
+            // 3. Update Horizontal Schedule
+            const horizontalContainer = document.getElementById('horizontal-schedule');
+            let horizontalHTML = '';
+            let showHour = displayHour;
+
+            horizontalHTML += `<span class="text-2xl tracking-widest mr-2">${String(showHour).padStart(2, '0')}</span><span class="text-gray-300 mr-4">:</span>`;
+
+            // FIX: Create a uniform container for all minutes to ensure perfect alignment
+            const minuteContainerClass = "inline-flex items-center justify-center w-[36px] h-[36px] rounded-full text-xl  mx-[2px]";
+
+            if (schedule[displayHour]) {
+                schedule[displayHour].forEach(m => {
+                    const isNext = nextBus && nextBus.hour === displayHour && nextBus.minute === m;
+
+                    let isPast = false;
+                    if (displayHour === currentHour && m <= currentMinute && !isNext) isPast = true;
+                    if (displayHour < currentHour) isPast = true;
+
+                    const mm = String(m).padStart(2, '0');
+
+                    if (isNext) {
+                        // Highlighted: Blue circle background
+                        horizontalHTML += `<span class="${minuteContainerClass} bg-[#6B9FDB] text-white shadow-md shadow-blue-200">${mm}</span>`;
+                    } else {
+                        // Normal: Just text
+                        const textColor = isPast ? 'text-gray-300' : 'text-gray-800';
+                        horizontalHTML += `<span class="${minuteContainerClass} ${textColor}">${mm}</span>`;
+                    }
+                });
+            } else {
+                horizontalHTML += `<span class="text-gray-300 text-sm">運行なし</span>`;
+            }
+            horizontalContainer.innerHTML = horizontalHTML;
+
+            // 4. Update Full Schedule Table
+            renderFullTimetable(schedule, currentHour, nextBus);
+        }
+
+        function renderFullTimetable(schedule, currentHour, nextBus) {
+            const container = document.getElementById('full-timetable-body');
+            let html = '';
+
+            const hours = Object.keys(schedule).map(Number).sort((a, b) => a - b);
+
+            // FIX: Use the same uniform container logic for the list view to ensure alignment
+            const listMinuteContainerClass = "inline-flex items-center justify-center w-[28px] h-[28px] rounded-full text-[20px] font-medium mx-1";
+
+            hours.forEach((h, index) => { // Use forEach to get index
+                const isCurrentRow = nextBus && nextBus.hour === h;
+
+                // Add alternating background color
+                let rowClass = (index % 2 === 1) ? 'bg-blue-50/50' : '';
+
+                let minutesHTML = '';
+                schedule[h].forEach(m => {
+                    const isNext = nextBus && nextBus.hour === h && nextBus.minute === m;
+                    const mm = String(m).padStart(2, '0');
+
+                    if (isNext) {
+                        minutesHTML += `<span class="${listMinuteContainerClass} bg-[#6B9FDB] text-white shadow-sm">${mm}</span>`;
+                    } else {
+                        minutesHTML += `<span class="${listMinuteContainerClass} text-gray-800">${mm}</span>`;
+                    }
+                });
+
+                let displayH = h;
+
+                html += `
+                    <tr class="${rowClass}">
+                        <td class="py-1 pl-4 pr-1 w-20 align-top tracking-widest text-[20px]">${String(displayH).padStart(2, '0')} :</td>
+                        <td class="py-2 tracking-widest font-medium flex flex-wrap items-center gap-y-1">
+                            ${minutesHTML}
+                        </td>
+                    </tr>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ... existing timer & init code ...
+        function startBusTimer() {
+            if (updateTimerInterval) clearInterval(updateTimerInterval);
+            updateBusDisplay();
+            updateTimerInterval = setInterval(updateBusDisplay, 1000);
+        }
+
+        function switchBusTab(type) {
+            currentBusType = type;
+            const univBtn = document.getElementById('tab-university');
+            const stationBtn = document.getElementById('tab-station');
+            const univInd = univBtn.querySelector('.active-indicator');
+            const stationInd = stationBtn.querySelector('.active-indicator');
+
+            if (type === 'university') {
+                univBtn.classList.remove('text-gray-300');
+                univBtn.classList.add('text-[#5C93D6]');
+                univInd.classList.remove('hidden');
+
+                stationBtn.classList.remove('text-[#5C93D6]');
+                stationBtn.classList.add('text-gray-300');
+                stationInd.classList.add('hidden');
+            } else {
+                stationBtn.classList.remove('text-gray-300');
+                stationBtn.classList.add('text-[#5C93D6]');
+                stationInd.classList.remove('hidden');
+
+                univBtn.classList.remove('text-[#5C93D6]');
+                univBtn.classList.add('text-gray-300');
+                univInd.classList.add('hidden');
+            }
+            updateBusDisplay();
+        }
+
+        // ... existing menu and timetable logic ...
+        const menuData = {
+            mon: {
+                date: "9/14",
+                items: [
+                    { type: 'A', name: '蒸し餃子の麻辣油淋ソース', price: 440, kcal: 746, salt: 4.9 },
+                    { type: 'B', name: '白身魚のピカタトマトソース', price: 500, kcal: 701, salt: 2.7 },
+                    { type: 'C', name: '豚ロースカツのおろしだれ', price: 550, kcal: 950, salt: 4.7 },
+                    { type: 'curry', name: 'ポークカレー', price: 300, kcal: 662, salt: 4.7 },
+                    { type: 'star', name: '豚焼き肉丼', price: 450, kcal: 718, salt: 3.9 },
+                    { type: 'noodle', name: '京都背脂醤油ラーメン', price: 600, kcal: 820, salt: 7.5 },
+
+                    { type: 'side', name: '金平ごぼう', price: 60, kcal: 28, salt: 0.8 },
+                    { type: 'side', name: '菜の花のピーナッツ和え', price: 60, kcal: 25, salt: 0.2 },
+                    { type: 'side', name: '冷奴', price: 60, kcal: 44, salt: 0.0 },
+                    { type: 'side', name: '味噌汁 油揚げ・ワカメ', price: 50, kcal: 60, salt: 2.9 },
+                ]
+            },
+
+            tue: {
+                date: "9/15",
+                items: [
+                    { type: 'A', name: '肉団子の甘酢あん', price: 440, kcal: 846, salt: 5.9 },
+                    { type: 'B', name: '鶏肉の照り焼き', price: 500, kcal: 805, salt: 4.2 },
+                    { type: 'C', name: 'カキフライ', price: 550, kcal: 1021, salt: 3.3 },
+                    { type: 'curry', name: 'ポークカレー', price: 300, kcal: 662, salt: 4.7 },
+                    { type: 'noodle', name: 'スパゲティアラビアータ', price: 440, kcal: 487, salt: 3.5 },
+                    { type: 'noodle', name: 'かき揚げうどん・そば', price: 430, kcal: 501, salt: 5.3 },
+
+                    { type: 'side', name: '茄子の煮浸し', price: 60, kcal: 10, salt: 0.1 },
+                    { type: 'side', name: 'オクラのお浸し', price: 60, kcal: 13, salt: 0.0 },
+                    { type: 'side', name: '冷奴', price: 60, kcal: 44, salt: 0.0 },
+                    { type: 'side', name: '味噌汁 油揚げ・ワカメ', price: 50, kcal: 60, salt: 2.9 },
+                ]
+            },
+
+            wed: {
+                date: "9/16",
+                items: [
+                    { type: 'A', name: '四川風麻婆豆腐', price: 440, kcal: 891, salt: 5.5 },
+                    { type: 'B', name: '鯖の塩焼き', price: 500, kcal: 858, salt: 3.5 },
+                    { type: 'C', name: 'チキン南蛮タルタルソース', price: 550, kcal: 1365, salt: 6.1 },
+                    { type: 'curry', name: 'ポークカレー', price: 300, kcal: 662, salt: 4.7 },
+                    { type: 'star', name: 'スパイシーピラフ', price: 450, kcal: 895, salt: 5.0 },
+                    { type: 'noodle', name: '味噌バターコーンラーメン', price: 430, kcal: 477, salt: 7.6 },
+
+                    { type: 'side', name: '金平ごぼう', price: 60, kcal: 28, salt: 0.8 },
+                    { type: 'side', name: 'ほうれん草の胡麻和え', price: 60, kcal: 21, salt: 0.4 },
+                    { type: 'side', name: '冷奴', price: 60, kcal: 44, salt: 0.0 },
+                    { type: 'side', name: '味噌汁 油揚げ・ワカメ', price: 50, kcal: 60, salt: 2.9 },
+                ]
+            },
+
+            thu: {
+                date: "9/17",
+                items: [
+                    { type: 'A', name: '豚キムチ豆腐', price: 440, kcal: 697, salt: 5.6 },
+                    { type: 'B', name: '白身魚の唐揚げ香味ソース', price: 500, kcal: 863, salt: 5.1 },
+                    { type: 'C', name: 'トマト煮込みハンバーグ', price: 550, kcal: 795, salt: 3.8 },
+                    { type: 'curry', name: 'ゴーゴーカレー', price: 450, kcal: 657, salt: 3.0 },
+                    { type: 'star', name: 'ロースカツカレー（ゴーゴーカレー）', price: 600, kcal: 874, salt: 3.7 },
+                    { type: 'noodle', name: '力うどん・そば', price: 430, kcal: 406, salt: 5.4 },
+
+                    { type: 'side', name: '茄子の煮浸し', price: 60, kcal: 10, salt: 0.1 },
+                    { type: 'side', name: '菜の花のピーナッツ和え', price: 60, kcal: 25, salt: 0.2 },
+                    { type: 'side', name: '冷奴', price: 60, kcal: 44, salt: 0.0 },
+                    { type: 'side', name: '味噌汁 油揚げ・ワカメ', price: 50, kcal: 60, salt: 2.9 },
+                ]
+            },
+
+            fri: {
+                date: "9/18",
+                items: [
+                    { type: 'A', name: '肉野菜炒め', price: 440, kcal: 641, salt: 6.2 },
+                    { type: 'B', name: 'ジャンボメンチカツ', price: 500, kcal: 966, salt: 2.8 },
+                    { type: 'C', name: '豚しゃぶのゴマだれ', price: 550, kcal: 1197, salt: 3.1 },
+                    { type: 'curry', name: 'ポークカレー', price: 300, kcal: 662, salt: 4.7 },
+                    { type: 'star', name: 'カツ丼', price: 450, kcal: 739, salt: 4.2 },
+                    { type: 'noodle', name: '温玉きつねうどん・そば', price: 430, kcal: 439, salt: 5.9 },
+
+                    { type: 'side', name: '茄子の煮浸し', price: 60, kcal: 10, salt: 0.1 },
+                    { type: 'side', name: 'ほうれん草の胡麻和え', price: 60, kcal: 21, salt: 0.4 },
+                    { type: 'side', name: '冷奴', price: 60, kcal: 44, salt: 0.0 },
+                    { type: 'side', name: '味噌汁 油揚げ・ワカメ', price: 50, kcal: 60, salt: 2.9 },
+                ]
+            }
+        };
+
+
+        function switchMenuTab(day) {
+            const days = ['mon', 'tue', 'wed', 'thu', 'fri'];
+            days.forEach(d => {
+                const btn = document.getElementById(`menu-tab-${d}`);
+                btn.classList.remove('text-[#5C93D6]', 'border-b-[3px]', 'border-[#5C93D6]');
+                btn.classList.add('text-gray-300');
+            });
+            const activeBtn = document.getElementById(`menu-tab-${day}`);
+            activeBtn.classList.remove('text-gray-300');
+            activeBtn.classList.add('text-[#5C93D6]', 'border-b-[2px]', 'border-[#5C93D6]');
+
+            const data = menuData[day] || menuData['tue'];
+            document.getElementById('menu-date').textContent = data.date;
+            const container = document.getElementById('menu-list-container');
+            container.innerHTML = '';
+            data.items.forEach(item => { container.innerHTML += createMenuItemHTML(item); });
+        }
+
+        function createMenuItemHTML(item) {
+            let iconHTML = '';
+            let iconClass = 'w-[30px] h-[30px] rounded-full flex-shrink-0 flex items-center justify-center';
+            let rowClass = 'flex gap-4 px-6 py-2 border-b border-[#EEEEEE] items-start';
+            if (item.type === 'side') rowClass = 'flex gap-4 px-6 py-2 border-b border-[#f3f3f3] items-center';
+
+            if (['A', 'B', 'C'].includes(item.type)) {
+                iconClass += ' mt-1 text-[16px] font-bold bg-[#E8F1FC] text-[#5C93D6]';
+                iconHTML = item.type;
+            } else if (item.type === 'star') {
+                iconClass += ' mt-1 bg-[#E8F1FC]';
+                iconHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#5C93D6" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>`;
+            } else if (['curry', 'noodle'].includes(item.type)) {
+                iconClass += ' mt-1 bg-[#E8F1FC] text-[#5C93D6]';
+                iconHTML = `<img src="img/menuicon.png" width="14" alt="menu icon">`;
+            } else if (item.type === 'side') {
+                iconClass += ' bg-[#E8F1FC] text-[#5C93D6]';
+                iconHTML = `<img src="img/cobachi.png" width="16" alt="menu icon">`;
+            }
+
+            return `<div class="${rowClass}"><div class="${iconClass}">${iconHTML}</div><div class="flex-1 flex flex-col gap-1"><div class="flex justify-between items-start"><div class="font-bold text-gray-800 text-[15px]">${item.name}</div><div class="font-bold text-gray-900 text-[15px]">${item.price}円</div></div><div class="text-[11.4px] text-[#5C93D6] font-medium tracking-wide">カロリー：${item.kcal}kcal　食塩：${item.salt}g</div></div></div>`;
+        }
+
+        switchMenuTab('tue');
+
+        function showMenuDetail() {
+            document.getElementById('main-view').classList.add('hidden');
+            document.getElementById('timetable-view').classList.add('hidden');
+            document.getElementById('links-view').classList.add('hidden');
+            document.getElementById('menu-detail-view').classList.remove('hidden');
+            updateBottomNav('home');
+        }
+        function showMain() {
+            document.getElementById('menu-detail-view').classList.add('hidden');
+            document.getElementById('timetable-view').classList.add('hidden');
+            document.getElementById('links-view').classList.add('hidden');
+            document.getElementById('main-view').classList.remove('hidden');
+            updateBottomNav('home');
+        }
+        function showTimetable() {
+            document.getElementById('main-view').classList.add('hidden');
+            document.getElementById('menu-detail-view').classList.add('hidden');
+            document.getElementById('links-view').classList.add('hidden');
+            document.getElementById('timetable-view').classList.remove('hidden');
+            updateBottomNav('calendar');
+        }
+        function showLinks() {
+            document.getElementById('main-view').classList.add('hidden');
+            document.getElementById('menu-detail-view').classList.add('hidden');
+            document.getElementById('timetable-view').classList.add('hidden');
+            document.getElementById('links-view').classList.remove('hidden');
+            updateBottomNav('links');
+        }
+
+        function updateBottomNav(activeId) {
+            const buttons = {
+                calendar: document.getElementById('nav-calendar'),
+                home: document.getElementById('nav-home'),
+                links: document.getElementById('nav-links')
+            };
+
+            // すべて非選択状態にする
+            Object.values(buttons).forEach(btn => {
+                btn.classList.remove('text-[#5C93D6]', 'text-[#1B3B48]');
+                btn.classList.add('text-gray-300');
+
+                const img = btn.querySelector('img');
+                if (img) img.style.opacity = '0.2';
+            });
+
+            // 選択中だけ有効化
+            const activeBtn = buttons[activeId];
+            if (!activeBtn) return;
+
+            if (activeId === 'home') {
+                activeBtn.classList.remove('text-gray-300');
+                activeBtn.classList.add('text-[#1B3B48]');
+            } else {
+                activeBtn.classList.remove('text-gray-300');
+                activeBtn.classList.add('text-[#5C93D6]');
+            }
+
+            const activeImg = activeBtn.querySelector('img');
+            if (activeImg) activeImg.style.opacity = '1';
+
+        }
+
+
+        function switchTimetableTab(tab) {
+            const tabMain = document.getElementById('tab-timetable-main');
+            const tabAnnual = document.getElementById('tab-annual');
+            const contentMain = document.getElementById('content-timetable');
+            const contentAnnual = document.getElementById('content-annual');
+
+            if (tab === 'timetable') {
+                tabMain.classList.remove('text-gray-300'); tabMain.classList.add('text-[#5C93D6]', 'border-b-[3px]', 'border-[#5C93D6]');
+                tabAnnual.classList.remove('text-[#5C93D6]', 'border-b-[3px]', 'border-[#5C93D6]'); tabAnnual.classList.add('text-gray-300');
+                contentMain.classList.remove('hidden'); contentAnnual.classList.add('hidden');
+            } else {
+                tabAnnual.classList.remove('text-gray-300'); tabAnnual.classList.add('text-[#5C93D6]', 'border-b-[3px]', 'border-[#5C93D6]');
+                tabMain.classList.remove('text-[#5C93D6]', 'border-b-[3px]', 'border-[#5C93D6]'); tabMain.classList.add('text-gray-300');
+                contentAnnual.classList.remove('hidden'); contentMain.classList.add('hidden');
+            }
+        }
+
+        function toggleSchedule() {
+            const countdownView = document.getElementById('countdown-view');
+            const scheduleView = document.getElementById('schedule-view');
+            if (scheduleView.classList.contains('hidden')) {
+                countdownView.classList.add('hidden'); scheduleView.classList.remove('hidden');
+            } else {
+                scheduleView.classList.add('hidden'); countdownView.classList.remove('hidden');
+            }
+        }
+
+        startBusTimer();
+        updateBottomNav('home');
+
+    </script>
+</body>
+
+</html>
