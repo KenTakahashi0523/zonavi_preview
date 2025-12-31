@@ -8,6 +8,16 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://use.typekit.net/yix5siq.css">
+    <script>
+        (function (d) {
+            var config = {
+                kitId: 'hkv3wue',
+                scriptTimeout: 3000,
+                async: true
+            },
+                h = d.documentElement, t = setTimeout(function () { h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive"; }, config.scriptTimeout), tk = d.createElement("script"), f = false, s = d.getElementsByTagName("script")[0], a; h.className += " wf-loading"; tk.src = 'https://use.typekit.net/' + config.kitId + '.js'; tk.async = true; tk.onload = tk.onreadystatechange = function () { a = this.readyState; if (f || a && a != "complete" && a != "loaded") return; f = true; clearTimeout(t); try { Typekit.load(config) } catch (e) { } }; s.parentNode.insertBefore(tk, s)
+        })(document);
+    </script>
 
     <style>
         /* フォント設定 */
@@ -38,8 +48,7 @@
 <body class="flex items-center justify-center min-h-screen bg-gray-900 text-gray-800">
 
     <!-- Phone Container Fixed Size 402x874 -->
-    <div class="bg-[#F5F7FA] relative overflow-hidden shadow-2xl"
-        style="width: 402px; height: 814px;">
+    <div class="bg-[#F5F7FA] relative overflow-hidden shadow-2xl" style="width: 402px; height: 814px;">
 
         <!-- ========================================== -->
         <!-- MAIN VIEW (Home)                           -->
@@ -496,8 +505,7 @@
                 <!-- Annual Schedule View (Initially Hidden) -->
                 <div id="content-annual" class="hidden h-full">
                     <!-- Placeholder Image - Replace URL to change image -->
-                    <img src="img/授業日程表2025.pdf"
-                        alt="Annual Schedule" class="w-full h-auto rounded-lg object-contain">
+                    <img src="img/授業日程表2025.pdf" alt="Annual Schedule" class="w-full h-auto rounded-lg object-contain">
                     <div class="text-center text-gray-400 mt-4 text-sm">
                     </div>
                 </div>
